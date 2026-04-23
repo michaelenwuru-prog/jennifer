@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Happy Birthday MY lady🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --red: #e0152a;
+    --red-deep: #8b0a18;
+    --red-bright: #ff2d44;
+    --black: #0a0a0a;
+    --black-soft: #141414;
+    --black-card: #1a0a0c;
+    --white: #fff5f5;
+    --gold: #f0c060;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    position: fixed;
+    width: 16px; height: 16px;
+    background: var(--red-bright);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 40px; height: 40px;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+    opacity: 0.6;
+  }
+
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 110%, rgba(224,21,42,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 10% 20%, rgba(139,10,24,0.2) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(4rem, 14vw, 10rem);
+    line-height: 1;
+    background: linear-gradient(135deg, #fff5f5 30%, var(--red-bright) 60%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.3em;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards, shimmer 4s 1.4s infinite;
+    background-size: 200%;
+  }
+
+  @keyframes shimmer {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 3.5vw, 2rem);
+    color: rgba(255,245,245,0.8);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.7s forwards;
+  }
+
+  .hero-message {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    font-weight: 300;
+    color: rgba(255,245,245,0.65);
+    max-width: 480px;
+    line-height: 1.7;
+    margin: 0 auto 3rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.9s forwards;
+  }
+
+  .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    opacity: 0;
+    animation: fadeUp 1s 1.4s forwards;
+  }
+  .scroll-hint span { animation: bounce 1.5s infinite; display: block; font-size: 1.2rem; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+  .age-badge {
+    position: absolute;
+    top: 6%; right: 5%;
+    width: clamp(80px, 12vw, 130px);
+    height: clamp(80px, 12vw, 130px);
+    background: var(--red);
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 3;
+    animation: spin-in 1s 1s cubic-bezier(.22,.68,0,1.2) both;
+    box-shadow: 0 0 40px rgba(224,21,42,0.6);
+  }
+  .age-badge .num {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1;
+    color: #fff;
+  }
+  .age-badge .label {
+    font-size: clamp(0.5rem, 1.2vw, 0.75rem);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.8);
+  }
+
+  @keyframes spin-in {
+    from { transform: rotate(-180deg) scale(0); opacity: 0; }
+    to   { transform: rotate(0deg) scale(1); opacity: 1; }
+  }
+
+  section { position: relative; z-index: 1; }
+
+  .letter-section {
+    padding: 6rem 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .letter-card {
+    background: var(--black-card);
+    border: 1px solid rgba(224,21,42,0.25);
+    border-radius: 4px;
+    padding: clamp(2rem, 6vw, 4rem) clamp(2rem, 7vw, 5rem);
+    max-width: 680px;
+    width: 100%;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(224,21,42,0.08),
+      0 30px 80px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .letter-card::before {
+    content: '♥';
+    position: absolute;
+    top: -1.1rem; left: 50%;
+    transform: translateX(-50%);
+    background: var(--red);
+    color: #fff;
+    width: 2.2rem; height: 2.2rem;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    line-height: 2.2rem;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(224,21,42,0.7);
+  }
+
+  .letter-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1.5rem;
+  }
+
+  .letter-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    line-height: 1.85;
+    color: rgba(255,245,245,0.85);
+    font-style: italic;
+  }
+
+  .letter-sign {
+    margin-top: 2rem;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: var(--red-bright);
+    text-align: right;
+  }
+
+  .reasons-section {
+    padding: 5rem 1.5rem;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    margin-bottom: 0.5rem;
+  }
+  .section-title span { color: var(--red); }
+  .section-sub {
+    font-size: 0.9rem;
+    color: rgba(255,245,245,0.45);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 3.5rem;
+  }
+
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .reason-card {
+    background: var(--black-card);
+    border: 1px solid rgba(224,21,42,0.15);
+    border-radius: 4px;
+    padding: 2rem 1.5rem;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    cursor: default;
+  }
+  .reason-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(224,21,42,0.5);
+    box-shadow: 0 20px 50px rgba(224,21,42,0.15);
+  }
+
+  .reason-emoji { font-size: 2.2rem; margin-bottom: 0.8rem; }
+  .reason-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: rgba(255,245,245,0.75);
+    line-height: 1.6;
+  }
+
+  .countdown-section {
+    padding: 5rem 1.5rem;
+    text-align: center;
+  }
+
+  .countdown-wrap {
+    display: flex;
+    justify-content: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+
+  .cd-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .cd-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(180deg, #fff5f5 40%, var(--red) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    min-width: 2ch;
+    text-align: center;
+  }
+
+  .cd-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,245,245,0.4);
+  }
+
+  .cd-sep {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: var(--red);
+    line-height: 1;
+    align-self: flex-start;
+    margin-top: 0.1em;
+  }
+
+  /* ── GALLERY ── */
+  .gallery-section {
+    padding: 5rem 1.5rem;
+    text-align: center;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    max-width: 800px;
+    margin: 3rem auto 0;
+  }
+
+  /* First photo spans 2 columns for a featured look */
+  .gallery-item:first-child {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+
+  .gallery-item {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(224,21,42,0.2);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  .gallery-item:first-child {
+    aspect-ratio: 16/9;
+  }
+
+  .gallery-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 16px 50px rgba(224,21,42,0.3);
+    border-color: var(--red);
+    z-index: 2;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.08);
+  }
+
+  /* Subtle red overlay on hover */
+  .gallery-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(224,21,42,0.25) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .gallery-item:hover::after {
+    opacity: 1;
+  }
+
+  footer {
+    padding: 4rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid rgba(224,21,42,0.12);
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-heart {
+    font-size: 2rem;
+    animation: heartbeat 1.2s infinite;
+    display: inline-block;
+  }
+  @keyframes heartbeat {
+    0%,100%{transform:scale(1)} 14%{transform:scale(1.3)} 28%{transform:scale(1)} 42%{transform:scale(1.2)} 70%{transform:scale(1)}
+  }
+
+  .footer-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(255,245,245,0.45);
+    margin-top: 1rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media(max-width: 500px) {
+    .gallery-grid { grid-template-columns: repeat(2,1fr); }
+    .gallery-item:first-child { grid-column: span 2; }
+    .age-badge { top: 2%; right: 2%; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="age-badge">
+    <span class="num">22</span>
+    <span class="label">years</span>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">✦ Today is your day ✦</p>
+    <h1 class="hero-name">Jennifer</h1>
+    <p class="hero-subtitle">Happy 22nd Birthday, my lady 🖤</p>
+    <p class="hero-message">hey mama, You light up every room, every moment, every heartbeat. This little corner of the internet is all yours today.</p>
+    <div class="scroll-hint">
+      <span>↓</span>
+      scroll to explore
+    </div>
+  </div>
+</section>
+
+<!-- ── LOVE LETTER ── -->
+<section class="letter-section">
+  <div class="letter-card reveal">
+    <p class="letter-label">✦ A note for you ✦</p>
+    <p class="letter-text">
+      Happy 22nd Birthday, my lady.<br><br>
+      hello my lady,
+      i dont really know what to say 😂, doubt there anything i want to say to you which i havent already told you.
+      I know we've fought more times than we can count, and I know we're not together anymore, and probably would never be again(but hey mama at least we tried)<br><br> through all the storms and silences, something in me never stopped choosing you. We kept coming back because what we had was real, even if it wasn't easy, even if it wasn't forever. You still have a place in my heart that no one else can touch. I'm not asking to go back. I just wanted you to know: a part of me will always carry you with love, not regret. even when i kept failing you, regardless of my flaws you never left, you stayed by my side, i am grateful......<br><br>
+      in as much as we never got the happy end we both deserve, i finally realise there actually cant be a happy end with us, "if 2 people love each other there could be no happy end to it" ever since i saw that quote i understood it and embraced it, best case? is we die together at the same time..<br><br>
+      im sorry, im sorry i couldnt make this day memorable for you, im sorry, im sorry i couldnt be what you wanted, im sorry, im sorry i wasnt always there for you, im sorry, im sorry for wasting your time. but i have no regrets, if i could take time bak to the day i met you, i would, without hesitation, without thinking twice, i would relive every moment with joy, the joy of having you again😥, but i promise, i promise i will comeback for you when i get myself back fully<br><br>
+      heres to 22 years my lady, happy Birthday my love.
+      I am so lucky to be the one by your side, i hope you enjoy your day.
+    </p>
+    <p class="letter-sign">With all my love.... MINIME 🖤</p>
+  </div>
+</section>
+
+<!-- ── REASONS ── -->
+<section class="reasons-section">
+  <h2 class="section-title reveal"><span>22</span> reasons I love you</h2>
+  <p class="section-sub reveal">just a few of many (we wont leave here if i wanted to list every reason) ❤</p>
+  <div class="reasons-grid" id="reasonsGrid"></div>
+</section>
+
+<!-- ── COUNTDOWN ── -->
+<section class="countdown-section">
+  <h2 class="section-title reveal">Your special <span>day</span></h2>
+  <p class="section-sub reveal">time since midnight on your birthday</p>
+  <div class="countdown-wrap" id="countdownWrap">
+    <div class="cd-block"><span class="cd-num" id="cd-h">00</span><span class="cd-label">Hours</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><span class="cd-num" id="cd-m">00</span><span class="cd-label">Minutes</span></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><span class="cd-num" id="cd-s">00</span><span class="cd-label">Seconds</span></div>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="gallery-section">
+  <h2 class="section-title reveal">Our <span>Memories</span></h2>
+  <p class="section-sub reveal">moments frozen in time, just for you</p>
+  <div class="gallery-grid">
+    <div class="gallery-item reveal" style="transition-delay:0.0s"><img src="img10.jpg" alt="Memory 1" /></div>
+    <div class="gallery-item reveal" style="transition-delay:0.08s"><img src="image1.jpg" alt="Memory 2" /></div>
+    <div class="gallery-item reveal" style="transition-delay:0.16s"><img src="img3.jpg" alt="Memory 3" /></div>
+    <div class="gallery-item reveal" style="transition-delay:0.24s"><img src="img6.jpg" alt="Memory 4" /></div>
+    <div class="gallery-item reveal" style="transition-delay:0.32s"><img src="img13.jpg" alt="Memory 5" /></div>
+    <div class="gallery-item reveal" style="transition-delay:0.48s"><img src="img22.jpg" alt="Memory 6" /></div>
+    <div class="gallery-item reveal" style="transition-delay:0.48s"><img src="img23.jpg" alt="Memory 7" /></div>
+
+  </div>
+    <div style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+    max-width: 900px;
+    margin: 3rem auto 0;
+  ">
+
+    <video src="img11.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="img12.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="img14.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="img15.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="img2.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="img4.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="img5.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="img7.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+  
+    <video src="img8.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+  
+    <video src="img9.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid1.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid2.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid3.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid4.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid5.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid6.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid7.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid8.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid9.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+
+    <video src="vid10.mp4" controls muted loop playsinline style="width:100%; border-radius:4px; border:1px solid rgba(224,21,42,0.3); box-shadow:0 16px 40px rgba(224,21,42,0.2);"></video>
+  </div>
+
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-heart">♥ minime</div>
+  <p class="footer-text">Made with love, just for you my lady · 2026</p>
+</footer>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top  = e.clientY + 'px';
+  }, 60);
+});
+
+// ── CONFETTI ──
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const COLORS = ['#e0152a','#ff2d44','#8b0a18','#f0c060','#ffffff','#ffb3bc'];
+const particles = Array.from({length: 80}, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height - canvas.height,
+  r: Math.random() * 5 + 2,
+  d: Math.random() * 3 + 1,
+  color: COLORS[Math.floor(Math.random()*COLORS.length)],
+  tilt: Math.random() * 10 - 10,
+  tiltAngle: 0,
+  tiltSpeed: Math.random() * 0.07 + 0.05,
+  shape: Math.random() > 0.5 ? 'circle' : 'rect'
+}));
+
+function drawConfetti() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.fillStyle = p.color;
+    if (p.shape === 'circle') {
+      ctx.arc(p.x, p.y, p.r, 0, 2*Math.PI);
+    } else {
+      ctx.rect(p.x, p.y, p.r*2, p.r);
+    }
+    ctx.fill();
+  });
+  particles.forEach(p => {
+    p.tiltAngle += p.tiltSpeed;
+    p.y += p.d;
+    p.tilt = Math.sin(p.tiltAngle) * 12;
+    if (p.y > canvas.height) {
+      p.y = -10;
+      p.x = Math.random() * canvas.width;
+    }
+  });
+  requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
+
+// ── REASONS ──
+const reasons = [
+  { e:'😂', t:'Your laugh is contagious' },
+  { e:'🔥', t:'Your energy is magnetic' },
+  { e:'🖤', t:'You love deeply and fiercely' },
+  { e:'💃', t:'The way you move a room' },
+  { e:'🌹', t:'Your boldness is breathtaking' },
+  { e:'✨', t:'You make everything sparkle' },
+  { e:'🧠', t:'Your mind is endlessly fascinating' },
+  { e:'💋', t:'Your smile stops my heart' },
+  { e:'🎯', t:'You know exactly what you want' },
+  { e:'🦋', t:'You make me want to be better' },
+  { e:'🌙', t:'You glow even in the dark' },
+  { e:'💋', t:'22 years of pure magic' },
+  { e:'😋', t:'You remember the little things' },
+  { e:'🤗', t:'How you love without keeping score' },
+  { e:'😎', t:'You make ordinary days feel magical' },
+  { e:'😱', t:'You see the real me and still love me' },
+  { e:'💑', t:'The future I see when I look at you' },
+  { e:'👩', t:'Because it is you' },
+  { e:'🎉', t:'You celebrate my wins like they are yours' },
+  { e:'💕', t:'The way you love me has rewritten what I thought love to be' },
+  { e:'🛑', t:'How you challenge me' },
+  { e:'❤️', t:'Your loyalty' },
+];
+
+const grid = document.getElementById('reasonsGrid');
+reasons.forEach((r, i) => {
+  const card = document.createElement('div');
+  card.className = 'reason-card reveal';
+  card.style.transitionDelay = (i * 0.06) + 's';
+  card.innerHTML = `<div class="reason-emoji">${r.e}</div><p class="reason-text">${r.t}</p>`;
+  grid.appendChild(card);
+});
+
+// ── COUNTDOWN ──
+function updateClock() {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(0,0,0,0);
+  const diff = Math.floor((now - midnight)/1000);
+  const h = Math.floor(diff/3600);
+  const m = Math.floor((diff%3600)/60);
+  const s = diff%60;
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
